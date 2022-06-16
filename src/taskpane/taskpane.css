@@ -1,0 +1,145 @@
+body,
+#container,
+.dk-layout {
+    background-color: #efefef;
+}
+
+.dk-layout-footer {
+    position  : absolute;
+    bottom    : 0;
+    width     : 100%;
+    background: #efefef;
+    padding   : 0.2rem 1rem;
+}
+
+.dk-grid-row {
+    margin: 0;
+}
+
+.dk-layout {
+    background-color: #efefef;
+    width           : 100%;
+}
+
+.dk-layout-header {
+    padding-left: 1rem;
+    text-align  : center;
+    height      : auto;
+    line-height : initial;
+}
+
+.dk-layout-content {
+    padding: 2rem 1rem;
+}
+
+div.link {
+    height     : 40px;
+    padding-top: 2px;
+    display    : flex;
+    height     : auto;
+}
+
+div.link a {
+    vertical-align: middle;
+}
+
+div.link a p {
+    padding: 5px;
+    display: inline-block;
+}
+
+.dk-layout-header a {
+    margin-left       : 6px;
+    text-decoration   : none;
+    font-size         : 0.8rem;
+    font-weight       : bold;
+    padding           : 3% 0;
+    color             : #666;
+    /* display        : flex; */
+}
+
+.dk-form-item-control input[type=submit] {
+    float: right;
+}
+
+div.link a.active {
+    border-bottom: 3px solid #2C7BE5;
+}
+
+.dk-layout-header img {
+    margin: auto;
+}
+
+.logo {
+    display: flex;
+}
+
+.instanceURL,
+.instanceURL input,
+.instanceURL select {
+    width: 100%;
+}
+
+/*
+LOGIN
+*/
+.login {
+    padding: 0rem 2rem;
+}
+
+.login h5 {
+    margin: 0 0 2rem 0;
+}
+
+.login .dk-form-item {
+    display: block;
+}
+
+.login .dk-form-item-label {
+    width  : auto;
+    height : auto;
+    padding: 0;
+}
+
+.login .dk-form-item-label-right {
+    justify-content: left;
+    font-weight    : bold;
+    font-size      : 0.8rem;
+    padding-bottom : 4px;
+}
+
+.login .dk-input,
+.login .dk-input-wrapper {
+    width: 100%;
+}
+
+.login .checkbox {
+    display   : flex;
+    float     : right;
+    margin-top: -95px;
+}
+
+.login .right .dk-form-item-control {
+    float: right;
+}
+
+/*
+
+.hader div {
+        padding-left: 0 !important;
+   }
+.header div label {
+    display: inline-flex;
+}
+.header div label a {
+    margin-left    : 6px;
+    text-decoration: none;
+    font-size      : 0.8rem;
+    font-weight    : bold;
+    padding        : 3% 0;
+}
+.header div label a:link, 
+.header div label a:visited {
+    color: #666
+}      
+*/
