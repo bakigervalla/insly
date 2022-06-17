@@ -1,28 +1,37 @@
-import React, { useState, useEffect, useRef } from "react";
-import useLocalStorage from "../../hooks/local-storage";
+import React, { useContext, useState, useEffect } from "react";
+import { useAuth, clearErrors, login } from "../../context/auth/AuthState";
+import { Navigate } from "react-router-dom";
+import AlertContext from "../../context/alert/alertContext";
+
+import useLocalStorage from "../../utils/local-storage";
 
 import { Form, Input, Button, Checkbox } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
 
 const LogIn = () => {
-  const [value, setValue] = useState("");
-  const [instances, setInstances] = useLocalStorage("instances", []);
-  const instanceRef = useRef(null);
+  const alertContext = useContext(AlertContext);
+  const { setAlert } = alertContext;
 
-  const handleSubmit = (event, values, errors, forms) => {
-    event.preventDefault();
+  const [authState, authDispatch] = useAuth();
+  const { error, isAuthenticated } = authState;
 
-    return;
-    setInstances(["era"]);
-    setInstances(...instances, instanceRef.current.value);
+  const [instances] = useLocalStorage("instances", []);
 
-    console.log(values);
-    if (!errors) {
-      setTimeout(() => {
-        forms.reset();
-      }, 2000);
+  useEffect(() => {
+    if (error === "Invalid Credentials") {
+      setAlert(error, "danger");
+      clearErrors(authDispatch);
     }
-  };
+  }, [error, isAuthenticated, authDispatch, setAlert]);
+
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = user;
+
+  const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
   const handleEmailValidator = (forms, value, callback) => {
     const frm = forms;
@@ -33,10 +42,21 @@ const LogIn = () => {
     }
   };
 
-  const onChangeHandler = (e) => setValue(e.target.value);
+  const onSubmitHandler = (e) => {
+    e.preventDefault();
+    if (email === "" || password === "") {
+      setAlert("Please fill in all fields", "danger");
+    } else {
+      login(authDispatch, {
+        email,
+        password,
+      });
+    }
+  };
+  if (isAuthenticated) return <Navigate to="/" />;
 
   return (
-    <Form onSubmit={handleSubmit} labelWidth={150} className="login">
+    <Form onSubmit={onSubmitHandler} labelWidth={150} className="login">
       <h5>Login to Quote & Bind</h5>
       <Form.Item label="Instance URL" name="instanceURL" required>
         <CreatableSelect
@@ -44,8 +64,7 @@ const LogIn = () => {
           name="instance"
           placeholder="Instance URL"
           isClearable
-          //   onChange={onChangeHandler}
-          //   onInputChange={onChangeHandler}
+          onChange={onChange}
           options={instances.map((val) => {
             return { value: val, label: val };
           })}

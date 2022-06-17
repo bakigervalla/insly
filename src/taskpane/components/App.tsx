@@ -1,12 +1,16 @@
 import * as React from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+
+import InslyState from "../../app/context/store/InslyState";
+// import AuthState from "../../app/context/auth/AuthState";
+import AlertState from "../../app/context/alert/AlertState";
 import PrivateRoute from "./PrivateRoute";
 
 require("regenerator-runtime/runtime");
-import { Alert } from "dashkit-ui";
 
 import Headerbar from "../../app/components/common/Header";
 import Progress from "../../app/components/common/Progress";
+import Messages from "../../app/components/common/Messages";
 
 import Home from "../../app/pages/home";
 import Integration from "../../app/pages/integration";
@@ -82,29 +86,29 @@ export default class App extends React.Component<AppProps> {
     }
 
     return (
-      <BrowserRouter>
-        <Layout>
-          <Header>
-            <Headerbar logo={"assets/icon-80.png"} title={this.props.title} message="Welcome" />
-          </Header>
-          <Layout>
-            <Content>
-              <Alert type="success" icon>
-                A simple success alert—check it out! *success, warning, info, error
-              </Alert>
-              <Switch>
-                {/* <Route exact path="/integration" component={<PrivateRoute component={Integration} />} />
-          <Route path="/template" element={<PrivateRoute component={Template} />} /> */}
-                <Route exact path="/integration" component={Integration} />
-                <Route exact path="/template" component={Template} />
-                <Route exact path="/home" component={Home} />
-                <Redirect to="/home" />
-              </Switch>
-            </Content>
-          </Layout>
-          <Footer>Insly (c) 2022 v1.0 | Document Template Assistant</Footer>
-        </Layout>
-      </BrowserRouter>
+      <InslyState>
+        <AlertState>
+          <BrowserRouter>
+            <Layout>
+              <Header>
+                <Headerbar logo={"assets/icon-80.png"} title={this.props.title} message="Welcome" />
+              </Header>
+              <Layout>
+                <Content>
+                  <Messages />
+                  <Switch>
+                    <Route exact path="/integration" component={<PrivateRoute component={Integration} />} />
+                    <Route exact path="/template" component={<PrivateRoute component={Template} />} />
+                    <Route exact path="/home" component={Home} />
+                    <Redirect to="/home" />
+                  </Switch>
+                </Content>
+              </Layout>
+              <Footer>Insly (c) 2022 v1.0 | Document Template Assistant</Footer>
+            </Layout>
+          </BrowserRouter>
+        </AlertState>
+      </InslyState>
     );
   }
 }

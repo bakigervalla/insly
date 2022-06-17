@@ -1,13 +1,14 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../../app/context/auth/AuthState";
+import Spinner from "../../app/components/common/Spinner";
 
-export default function PrivateRoute() {
-  //({ component: Component }) {
-  //}, ...rest }) {
-  const isLogged = false; // useState
+const PrivateRoute = ({ component: Component }) => {
+  const [authState] = useAuth();
+  const { isAuthenticated, loading } = authState;
+  if (loading) return <Spinner />;
+  if (isAuthenticated) return <Component />;
+  return <Navigate to="/login" />;
+};
 
-  // If authorized, return an outlet that will render child elements
-  // If not, return element that will navigate to login page
-  return <h1>Era</h1>;
-  //   return isLogged ? <Component /> : <Navigate to="/login" />;
-}
+export default PrivateRoute;
