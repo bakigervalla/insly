@@ -22,7 +22,6 @@ module.exports = async (env, options) => {
             vendor: ["react", "react-dom", "core-js", "@fluentui/react"],
             taskpane: ["react-hot-loader/patch", "./src/taskpane/index.tsx"],
             commands: "./src/commands/commands.ts",
-
         },
         output: {
             devtoolModuleFilenameTemplate: "webpack:///[resource-path]?[loaders]",
@@ -34,7 +33,14 @@ module.exports = async (env, options) => {
         module: {
             rules: [
                 {
-                    test: /\.ts$/,
+                    test: /\.(ts|tsx)?$/,
+                    use: {
+                        loader: "ts-loader",
+                    },
+                    exclude: /node_modules/,
+                },
+                {
+                    test: /\.js$|jsx/,
                     exclude: /node_modules/,
                     use: {
                         loader: "babel-loader",
@@ -44,7 +50,7 @@ module.exports = async (env, options) => {
                     },
                 },
                 {
-                    test: /\.tsx?$/,
+                    test: /\.js$|jsx/,
                     use: ["react-hot-loader/webpack", "ts-loader"],
                     exclude: /node_modules/,
                 },
@@ -61,14 +67,13 @@ module.exports = async (env, options) => {
                     },
                 },
                 {
-
                     test: /\.css$/,
-                    use: ['style-loader', 'css-loader']
+                    use: ["style-loader", "css-loader"],
                 },
                 {
                     test: /\.(jpg|png|svg|ttf)$/,
-                    use: 'url-loader'
-                }
+                    use: "url-loader",
+                },
             ],
         },
         plugins: [

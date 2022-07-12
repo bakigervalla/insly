@@ -1,3 +1,11 @@
 {
-  "presets": ["@babel/preset-typescript"]
+  "presets": ["@babel/preset-typescript", "@babel/preset-env", "@babel/preset-react"],
+  "plugins": [
+    ["import", {
+      "libraryName": "dashkit-ui",
+      "libraryDirectory": "es",
+      "style": true
+    }, "dashkit-ui"]
+  ]
+  
 }

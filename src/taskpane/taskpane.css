@@ -113,14 +113,30 @@ LOGIN
     width: 100%;
 }
 
+.login .pass-label {
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+.login .pass-remind {
+    margin-bottom: 6px;
+    float        : right;
+    text-align   : right;
+    margin-right : 12px;
+}
+
 .login .checkbox {
     display   : flex;
     float     : right;
-    margin-top: -95px;
+    margin-top: -20px;
 }
 
 .login .right .dk-form-item-control {
     float: right;
+}
+
+.error {
+    color: red
 }
 
 /*
@@ -143,3 +159,8 @@ LOGIN
     color: #666
 }      
 */
+
+.dk-form-item {
+    margin-bottom: 0 !important;
+    margin-top   : 24px;
+}

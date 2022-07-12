@@ -1,14 +1,14 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../app/context/auth/AuthState";
+import { Route, Redirect } from "react-router-dom";
+import { useAuth } from "../../app/context/auth/AuthProvider";
 import Spinner from "../../app/components/common/Spinner";
 
-const PrivateRoute = ({ component: Component }) => {
-  const [authState] = useAuth();
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const [authState, authDispatch] = useAuth();
   const { isAuthenticated, loading } = authState;
-  if (loading) return <Spinner />;
-  if (isAuthenticated) return <Component />;
-  return <Navigate to="/login" />;
+
+  <Spinner spinning={loading} />;
+  return <Route {...rest} render={(props) => (isAuthenticated ? <Component {...props} /> : <Redirect to="/home" />)} />;
 };
 
 export default PrivateRoute;

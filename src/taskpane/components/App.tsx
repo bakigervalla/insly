@@ -1,16 +1,16 @@
 import * as React from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, Slide } from "react-toastify";
 
-import InslyState from "../../app/context/store/InslyState";
-// import AuthState from "../../app/context/auth/AuthState";
-import AlertState from "../../app/context/alert/AlertState";
+import InslyProvider from "../../app/context/insly/InslyProvider";
+import AuthProvider from "../../app/context/auth/AuthProvider";
+import { AlertProvider } from "../../app/context/alert/AlertContext";
 import PrivateRoute from "./PrivateRoute";
-
-require("regenerator-runtime/runtime");
 
 import Headerbar from "../../app/components/common/Header";
 import Progress from "../../app/components/common/Progress";
-import Messages from "../../app/components/common/Messages";
+import AlertPopup from "../../app/components/common/AlertPopup";
 
 import Home from "../../app/pages/home";
 import Integration from "../../app/pages/integration";
@@ -18,6 +18,9 @@ import Template from "../../app/pages/template";
 
 import "../../../node_modules/dashkit-ui/lib/style/index.css";
 import "../../taskpane/taskpane.css";
+
+import "regenerator-runtime/runtime";
+import "babel-polyfill";
 
 import { Layout } from "dashkit-ui";
 const { Header, Footer, Content } = Layout;
@@ -86,29 +89,43 @@ export default class App extends React.Component<AppProps> {
     }
 
     return (
-      <InslyState>
-        <AlertState>
+      <InslyProvider>
+        <AuthProvider>
           <BrowserRouter>
             <Layout>
               <Header>
                 <Headerbar logo={"assets/icon-80.png"} title={this.props.title} message="Welcome" />
               </Header>
               <Layout>
-                <Content>
-                  <Messages />
-                  <Switch>
-                    <Route exact path="/integration" component={<PrivateRoute component={Integration} />} />
-                    <Route exact path="/template" component={<PrivateRoute component={Template} />} />
-                    <Route exact path="/home" component={Home} />
-                    <Redirect to="/home" />
-                  </Switch>
-                </Content>
+                <AlertProvider>
+                  <Content>
+                    <AlertPopup />
+                    <ToastContainer
+                      position="top-center"
+                      autoClose={3000}
+                      hideProgressBar={true}
+                      newestOnTop={false}
+                      closeOnClick
+                      rtl={false}
+                      pauseOnFocusLoss
+                      draggable
+                      pauseOnHover
+                      transition={Slide}
+                    />
+                    <Switch>
+                      <PrivateRoute path="/integration" component={Integration} exact />
+                      <PrivateRoute path="/template" component={Template} exact />
+                      <Route path="/home" component={Home} exact />
+                      <Redirect to="/home" />
+                    </Switch>
+                  </Content>
+                </AlertProvider>
               </Layout>
               <Footer>Insly (c) 2022 v1.0 | Document Template Assistant</Footer>
             </Layout>
           </BrowserRouter>
-        </AlertState>
-      </InslyState>
+        </AuthProvider>
+      </InslyProvider>
     );
   }
 }

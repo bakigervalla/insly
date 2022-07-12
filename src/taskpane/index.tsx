@@ -5,8 +5,10 @@ import { ThemeProvider } from "@fluentui/react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-/* global document, Office, module, require */
+import "regenerator-runtime/runtime";
+import "babel-polyfill";
 
+/* global document, Office, module, require */
 initializeIcons();
 
 let isOfficeInitialized = false;

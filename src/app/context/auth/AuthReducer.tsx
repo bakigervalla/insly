@@ -1,7 +1,13 @@
-import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS } from "../types";
+import { INITIALIZED, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS } from "../types";
 
-const authReducer = (state, action) => {
+export const AuthReducer = (state: any, action: any) => {
   switch (action.type) {
+    case INITIALIZED:
+      return {
+        ...state,
+        initialized: action.payload,
+        loading: false,
+      };
     case USER_LOADED:
       return {
         ...state,
@@ -12,8 +18,8 @@ const authReducer = (state, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        ...action.payload,
         isAuthenticated: true,
+        user: action.payload,
         loading: false,
       };
     case AUTH_ERROR:
@@ -37,4 +43,4 @@ const authReducer = (state, action) => {
   }
 };
 
-export default authReducer;
+export default AuthReducer;
