@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useEffect } from "react";
+import React, { useContext, useReducer } from "react";
 import { useLocalStorage, writeStorage } from "@rehooks/local-storage";
 
 import AuthContext from "./AuthContext";
@@ -15,7 +15,6 @@ export const useAuth = (): any => {
 };
 
 export const setLogin = (dispatch, user) => {
-  console.log("set login");
   if (user && user.token?.length > 0)
     dispatch({
       type: LOGIN_SUCCESS,
