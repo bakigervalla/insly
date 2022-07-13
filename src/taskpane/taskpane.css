@@ -161,6 +161,52 @@ LOGIN
 */
 
 .dk-form-item {
+    margin: 0
+}
+
+.login .dk-form-item {
     margin-bottom: 0 !important;
     margin-top   : 24px;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right
+}
+
+/* ACCOUNT */
+.account .dk-card-header,
+.settings .dk-card-header {
+    padding: 8px;
+}
+
+.account .list-group-lg li,
+.settings .list-group-lg li {
+    padding-bottom: 6px;
+    list-style    : none;
+    border-bottom : 1px solid #d2ddec;
+}
+
+.account .dk-card-body,
+.settings .dk-card-body {
+    padding: 16px 10px !important;
+}
+
+.logout button {
+    width      : auto;
+    height     : 28px;
+    padding-top: 0;
+}
+
+.settings {
+    margin-top: 20px;
+}
+
+.settings .dk-radio-group-item {
+    margin-left : 16px;
+    display     : inline-flex;
+    margin-right: 2px !important;
 }

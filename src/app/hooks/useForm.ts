@@ -5,10 +5,20 @@ export const useForm = (options) => {
   const [errors, setErrors] = useState(options?.initialErrors || {});
 
   const handleChange = (key: string, e: any) => {
-    setData({
-      ...data,
-      [key]: e,
-    });
+    if (["fieldsDisplay", "insertWithTitle", "keepMeLogged", "uploadConfirmation"].includes(key)) {
+      data.settings[key] = e;
+      setData({
+        ...data,
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: e,
+      });
+    }
+    if (options?.onChange) {
+      options.onChange();
+    }
   };
 
   const fillData = (values) => {

@@ -1,7 +1,8 @@
 import * as React from "react";
+import Index from "../components/integration/index";
 
 const Integration = () => {
-  return <h1>Integration</h1>;
+  return <Index />;
 };
 
 export default Integration;

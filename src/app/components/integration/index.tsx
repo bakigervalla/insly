@@ -10,7 +10,7 @@ import { useForm } from "../../hooks/useForm";
 import { useLocalStorage } from "@rehooks/local-storage";
 import setAuthToken from "../../context/auth/setAuthToken";
 
-const LogIn = () => {
+const Index = () => {
   const [authState, authDispatch] = useAuth();
   const { isAuthenticated } = authState;
   let arr = useLocalStorage<any>("instances");
@@ -75,7 +75,11 @@ const LogIn = () => {
     setLogin(authDispatch, user);
   }, []);
 
-  //   if (!isAuthenticated) if (isAuthenticated) return <Navigate to="/" />;
+  useEffect(() => {
+    setAuthToken(user.token, user.instance);
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) if (isAuthenticated) return <Navigate to="/" />;
 
   return (
     <>
@@ -140,4 +144,4 @@ const LogIn = () => {
   );
 };
 
-export default LogIn;
+export default Index;

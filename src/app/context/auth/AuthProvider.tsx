@@ -1,12 +1,13 @@
 import React, { useContext, useReducer } from "react";
-import { useLocalStorage, writeStorage } from "@rehooks/local-storage";
+import { useLocalStorage, writeStorage, deleteFromStorage } from "@rehooks/local-storage";
 
 import AuthContext from "./AuthContext";
 import { AuthReducer } from "./AuthReducer";
 
+import setAuthToken from "./setAuthToken";
 import axios from "axios";
 
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS } from "../types";
+import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, GET_SETTINGS, AUTH_ERROR, CLEAR_ERRORS } from "../types";
 
 // Create a custom hook to use the auth context
 export const useAuth = (): any => {
@@ -38,6 +39,10 @@ export const login = (dispatch, formData: any, instances: any) => {
         instances.push(formData.instance);
         writeStorage("instances", instances);
       }
+
+      // set token and base url
+      setAuthToken(user.token, user.instance);
+
       dispatch({
         type: LOGIN_SUCCESS,
         payload: user,
@@ -46,14 +51,92 @@ export const login = (dispatch, formData: any, instances: any) => {
     .catch((err) =>
       dispatch({
         type: LOGIN_FAIL,
-        payload: err,
+        payload: err.response?.data?.message,
       })
     );
 };
 
 // Logout
 export const logout = (dispatch) => {
+  deleteFromStorage("user");
   dispatch({ type: LOGOUT });
+};
+
+// Get Settings
+export const getSettings = (dispatch, user) => {
+  const settings = {
+    email: user.email,
+    name: "baki gervalla",
+    version: "1.2",
+    url: user.instance,
+    settings: {
+      fieldsDisplay: "2",
+      insertWithTitle: false,
+      uploadConfirmation: true,
+      keepMeLogged: false,
+    },
+  };
+
+  writeStorage("config", settings);
+
+  dispatch({
+    type: GET_SETTINGS,
+    //payload: res.data,
+    payload: settings,
+  });
+
+  return;
+
+  axios
+    .post(`${user.instance}/api/addins/word/config`, {
+      email: user.email,
+      name: "baki gervalla",
+      version: "1.2",
+      url: "https://uniqa.insly.site",
+      settings: {
+        fieldsDisplay: "1",
+        insertWithTitle: false,
+        uploadConfirmation: true,
+        keepMeLogged: false,
+      },
+    })
+    .then((res) => {
+      writeStorage("config", res.data);
+
+      dispatch({
+        type: GET_SETTINGS,
+        //payload: res.data,
+        payload: {
+          email: user.email,
+          name: "baki gervalla",
+          version: "1.2",
+          url: user.instance,
+          settings: {
+            fieldsDisplay: "1",
+            insertWithTitle: false,
+            uploadConfirmation: true,
+            keepMeLogged: false,
+          },
+        },
+      });
+    })
+    .catch((err) =>
+      dispatch({
+        type: AUTH_ERROR,
+        payload: err,
+      })
+    );
+};
+
+export const saveSettings = (dispatch, settings) => {
+  deleteFromStorage("config");
+  writeStorage("config", settings);
+
+  dispatch({
+    type: GET_SETTINGS,
+    //payload: res.data,
+    payload: settings,
+  });
 };
 
 // Clear Errors
@@ -61,12 +144,19 @@ export const clearErrors = (dispatch) => dispatch({ type: CLEAR_ERRORS });
 
 export const AuthProvider = (props: any) => {
   let [user] = useLocalStorage<any>("user");
+  let [settings] = useLocalStorage<any>("config");
   const initialState = {
     initialized: false,
     loading: false,
     token: user?.token,
-    isAuthenticated: false,
-    user: {},
+    isAuthenticated: user?.token.length > 0,
+    user: user || {},
+    config: settings || {
+      fieldsDisplay: "1",
+      insertWithTitle: false,
+      uploadConfirmation: true,
+      keepMeLogged: false,
+    },
     error: {},
   };
 

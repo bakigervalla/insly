@@ -1,6 +1,18 @@
-import { INITIALIZED, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS } from "../types";
+import {
+  INITIALIZED,
+  USER_LOADED,
+  AUTH_ERROR,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT,
+  GET_SETTINGS,
+  CLEAR_ERRORS,
+} from "../types";
+import useAlert from "../../hooks/useAlert";
 
 export const AuthReducer = (state: any, action: any) => {
+  const { setAlert } = useAlert();
+
   switch (action.type) {
     case INITIALIZED:
       return {
@@ -24,6 +36,13 @@ export const AuthReducer = (state: any, action: any) => {
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
+      console.log(action.payload);
+
+      setAlert(action.payload, "danger");
+      return {
+        ...state,
+        error: action.payload,
+      };
     case LOGOUT:
       return {
         ...state,
@@ -32,6 +51,11 @@ export const AuthReducer = (state: any, action: any) => {
         loading: false,
         user: null,
         error: action.payload,
+      };
+    case GET_SETTINGS:
+      return {
+        ...state,
+        config: action.payload,
       };
     case CLEAR_ERRORS:
       return {

@@ -22,7 +22,7 @@ import {
 
 // Create a custom hook to use the Vehicle context
 
-export default function InslyProvider({ children }: any) {
+export default function useInsly({ children }: any) {
   const initialState: any = {
     intialized: false,
     settings: {},
