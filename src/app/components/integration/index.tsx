@@ -1,27 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Checkbox } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
-import { toast } from "react-toastify";
-import useAlert from "../../hooks/useAlert";
+
+import FieldsList from "./fields-list";
 
 import { Navigate } from "react-router-dom";
-import { useAuth, login, setLogin } from "../../context/auth/AuthProvider";
+import { useInsly, getSchemas, getFields } from "../../context/insly/InslyState";
+
 import { useForm } from "../../hooks/useForm";
-import { useLocalStorage } from "@rehooks/local-storage";
-import setAuthToken from "../../context/auth/setAuthToken";
 
 const Index = () => {
-  const [authState, authDispatch] = useAuth();
-  const { isAuthenticated } = authState;
-  let arr = useLocalStorage<any>("instances");
-  let [user] = useLocalStorage<any>("instances");
-  // const { setAlert } = useAlert();
+  const [inslyState, inslyDispatch] = useInsly();
+  const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
+  const { schemas, fields } = inslyState;
+  const [selectedField, setSelectedField] = useState({ label: "", value: "" });
 
-  // useLocalStorage returns empty values
-  let instances = arr.filter(function (el) {
-    return el != null && (typeof el === "string" || el instanceof String);
-  });
+  useEffect(() => {
+    getSchemas(inslyDispatch);
+  }, []);
 
+  useEffect(() => {
+    let schemaOptions = [];
+    schemas.map((schema) => {
+      schema.integrations.map((integration) => {
+        schemaOptions.push({ label: `${schema.name} - ${integration.key}`, value: `${schema.id},${integration.key}` });
+      });
+    });
+    setOptions(schemaOptions);
+    // setOptions([...options, { label: `${schema.name} ${integration.label}`, value: integration.key }]);
+  }, [schemas]);
+
+  useEffect(() => {
+    let arrSelected = selectedField["value"]?.split(",");
+    getFields(inslyDispatch, arrSelected[0], arrSelected[1]);
+  }, [selectedField]);
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
     // initialValues: { instance: "", email: "", password: "" },
@@ -58,87 +70,30 @@ const Index = () => {
       },
     },
     onSubmit: () => {
-      login(
-        authDispatch,
-        {
-          instance: Array.isArray(data.instance.value) ? data.instance.value[0] : data.instance.value,
-          email: data.email,
-          password: data.password,
-          rememberme: data.rememberme ?? false,
-        },
-        instances ?? []
-      );
+      console.log("era");
     },
   });
-
-  useEffect(() => {
-    setLogin(authDispatch, user);
-  }, []);
-
-  useEffect(() => {
-    setAuthToken(user.token, user.instance);
-  }, [isAuthenticated]);
-
-  if (!isAuthenticated) if (isAuthenticated) return <Navigate to="/" />;
 
   return (
     <>
       <Form onSubmit={handleSubmit} labelWidth={150} className="login">
-        <h5>Login to Quote &amp; Bind</h5>
-        <div>
-          <Form.Item label="Instance URL" name="instance">
+        <div className="schema-title">
+          <Form.Item label="Choose Schema &amp; Integration:" name="schema">
             <CreatableSelect
               className="instanceURL"
-              name="instance"
-              placeholder="Instance URL"
-              isClearable
-              value={data.instance || []}
+              name="schema"
+              value={selectedField}
               //   inputValue={data.instance || ""}
               //   onInputChange={(e: any) => handleChange("instance", e)}
-              onChange={(e: any) => handleChange("instance", e)}
-              options={instances.map((val) => {
-                return { value: val, label: val };
-              })}
+              onChange={(e: any) => {
+                setSelectedField(e);
+                handleChange("schema", e);
+              }}
+              options={options}
             ></CreatableSelect>
           </Form.Item>
-          {errors.instance && <p className="error">{errors.instance}</p>}
         </div>
-        <Form.Item label="Email" name="email">
-          <Input
-            placeholder="Email Address"
-            name="email"
-            value={data.email || ""}
-            onChange={(e: any) => handleChange("email", e)}
-          />
-        </Form.Item>
-        {errors.email && <p className="error">{errors.email}</p>}
-        <div className="dk-form-item">
-          <div className="ms-Grid-row">
-            <label className="ms-sm6 ms-md6 ms-lg6 pass-label">Password</label>
-            <Checkbox
-              className="ms-sm6 ms-md6 ms-lg6 pass-remind"
-              checked={data.rememberme || false}
-              onChange={(e: any) => handleChange("rememberme", e.target.checked)}
-            >
-              Remind Password
-            </Checkbox>
-          </div>
-          <div className="ms-Grid-row ms-Grid-col ms-md12">
-            <Input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={data.password || ""}
-              onChange={(e: any) => handleChange("password", e)}
-            />
-            {errors.password && <p className="error">{errors.password}</p>}
-          </div>
-        </div>
-        <Form.Item className="right">
-          <Button type="primary" htmlType="submit" icon="arrow-right">
-            Submit
-          </Button>
-        </Form.Item>
+        <FieldsList items={fields} />
       </Form>
     </>
   );

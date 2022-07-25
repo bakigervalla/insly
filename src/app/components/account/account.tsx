@@ -11,7 +11,7 @@ const Account = () => {
 
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
-    // initialValues: { instance: "", email: "", password: "" },
+    initialValues: { instance: "", email: "", name: "" },
     // initialErrors: { instance: "", email: "", password: "" },
     validations: {
       instance: {
@@ -75,7 +75,7 @@ const Account = () => {
             <li>
               Instance URL
               <span className="float-right">
-                <a href="{user.instance}">{data.url}</a>
+                <a href={data.url}>{data.url}</a>
               </span>
             </li>
             <li>

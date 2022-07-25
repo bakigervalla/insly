@@ -1,18 +1,15 @@
 import axios from "axios";
 
-const setAuthToken = (value: string, baseUrl: string) => {
-  console.log(axios.defaults.headers);
-  console.log(axios.defaults.baseURL);
-
-  if (value) {
-    axios.defaults.headers.common["x-auth-token"] = value;
-    axios.defaults.baseURL = baseUrl;
+const setAuthToken = (token: string, baseUrl: string) => {
+  if (token) {
+    // axios.defaults.headers.common["x-auth-token"] = value;
+    axios.defaults.headers.common = { Authorization: `bearer ${token}` };
+    axios.defaults.baseURL = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
   } else {
-    delete axios.defaults.headers.common["x-auth-token"];
+    delete axios.defaults.headers.common["Authorization"];
+    // delete axios.defaults.headers.common["x-auth-token"];
   }
-
-  console.log(axios.defaults.headers);
-  console.log(axios.defaults.baseURL);
+  console.log(token);
 };
 
 export default setAuthToken;

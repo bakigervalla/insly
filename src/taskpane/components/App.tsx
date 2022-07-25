@@ -3,14 +3,12 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, Slide } from "react-toastify";
 
-import InslyProvider from "../../app/context/insly/InslyProvider";
+import InslyState from "../../app/context/insly/InslyState";
 import AuthProvider from "../../app/context/auth/AuthProvider";
-import { AlertProvider } from "../../app/context/alert/AlertContext";
 import PrivateRoute from "./PrivateRoute";
 
 import Headerbar from "../../app/components/common/Header";
 import Progress from "../../app/components/common/Progress";
-import AlertPopup from "../../app/components/common/AlertPopup";
 
 import Home from "../../app/pages/home";
 import Integration from "../../app/pages/integration";
@@ -89,43 +87,40 @@ export default class App extends React.Component<AppProps> {
     }
 
     return (
-      <InslyProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <InslyState>
           <BrowserRouter>
             <Layout>
               <Header>
                 <Headerbar logo={"assets/icon-80.png"} title={this.props.title} message="Welcome" />
               </Header>
               <Layout>
-                <AlertProvider>
-                  <Content>
-                    <AlertPopup />
-                    <ToastContainer
-                      position="top-center"
-                      autoClose={3000}
-                      hideProgressBar={true}
-                      newestOnTop={false}
-                      closeOnClick
-                      rtl={false}
-                      pauseOnFocusLoss
-                      draggable
-                      pauseOnHover
-                      transition={Slide}
-                    />
-                    <Switch>
-                      <PrivateRoute path="/integration" component={Integration} exact />
-                      <PrivateRoute path="/template" component={Template} exact />
-                      <Route path="/home" component={Home} exact />
-                      <Redirect to="/home" />
-                    </Switch>
-                  </Content>
-                </AlertProvider>
+                <Content>
+                  <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={true}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    transition={Slide}
+                  />
+                  <Switch>
+                    <PrivateRoute path="/integration" component={Integration} exact />
+                    <PrivateRoute path="/template" component={Template} exact />
+                    <Route path="/home" component={Home} exact />
+                    <Redirect to="/home" />
+                  </Switch>
+                </Content>
               </Layout>
               <Footer>Insly (c) 2022 v1.0 | Document Template Assistant</Footer>
             </Layout>
           </BrowserRouter>
-        </AuthProvider>
-      </InslyProvider>
+        </InslyState>
+      </AuthProvider>
     );
   }
 }

@@ -13,7 +13,7 @@ interface InslyProps {
   getSchemas?: (symbols: Array<string>) => void;
 }
 
-const defaultValue: InslyProps = {
+const defaultValue: any = {
   intialized: false,
   instances: [],
   settings: {},

@@ -2,20 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Checkbox } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
 import { toast } from "react-toastify";
-import useAlert from "../../hooks/useAlert";
 
 import { Navigate } from "react-router-dom";
 import { useAuth, login, setLogin } from "../../context/auth/AuthProvider";
 import { useForm } from "../../hooks/useForm";
 import { useLocalStorage } from "@rehooks/local-storage";
-import setAuthToken from "../../context/auth/setAuthToken";
 
 const LogIn = () => {
-  const [authState, authDispatch] = useAuth();
-  const { isAuthenticated } = authState;
+  const [, authDispatch] = useAuth();
   let arr = useLocalStorage<any>("instances");
-  let [user] = useLocalStorage<any>("instances");
-  // const { setAlert } = useAlert();
 
   // useLocalStorage returns empty values
   let instances = arr.filter(function (el) {
@@ -24,7 +19,7 @@ const LogIn = () => {
 
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
-    // initialValues: { instance: "", email: "", password: "" },
+    initialValues: { instance: "", email: "", password: "2f9uMx^YpE*`Md}D" },
     // initialErrors: { instance: "", email: "", password: "" },
     validations: {
       instance: {
@@ -71,9 +66,9 @@ const LogIn = () => {
     },
   });
 
-  useEffect(() => {
-    setLogin(authDispatch, user);
-  }, []);
+  //   useEffect(() => {
+  //     setLogin(authDispatch, user);
+  //   }, []);
 
   //   if (!isAuthenticated) if (isAuthenticated) return <Navigate to="/" />;
 

@@ -8,11 +8,9 @@ import {
   GET_SETTINGS,
   CLEAR_ERRORS,
 } from "../types";
-import useAlert from "../../hooks/useAlert";
+import { toast } from "react-toastify";
 
 export const AuthReducer = (state: any, action: any) => {
-  const { setAlert } = useAlert();
-
   switch (action.type) {
     case INITIALIZED:
       return {
@@ -36,9 +34,15 @@ export const AuthReducer = (state: any, action: any) => {
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
-      console.log(action.payload);
-
-      setAlert(action.payload, "danger");
+      toast.error(action.payload, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return {
         ...state,
         error: action.payload,

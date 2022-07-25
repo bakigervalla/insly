@@ -210,3 +210,7 @@ LOGIN
     display     : inline-flex;
     margin-right: 2px !important;
 }
+
+.schema-title .dk-form-item-label {
+    white-space: nowrap;
+}

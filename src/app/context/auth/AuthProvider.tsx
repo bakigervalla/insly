@@ -48,12 +48,12 @@ export const login = (dispatch, formData: any, instances: any) => {
         payload: user,
       });
     })
-    .catch((err) =>
+    .catch((err) => {
       dispatch({
         type: LOGIN_FAIL,
         payload: err.response?.data?.message,
-      })
-    );
+      });
+    });
 };
 
 // Logout
