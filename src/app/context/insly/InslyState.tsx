@@ -49,11 +49,19 @@ export const getSchemas = (dispatch) => {
 
 // Get Fields
 export const getFields = (dispatch, schema_id, integration_key) => {
+  dispatch({
+    type: GET_FIELDS,
+    payload: [],
+  });
+
+  if (!schema_id || !integration_key) return;
+
   axios(`/api/add-ins/word/schemas/${schema_id}/integrations/${integration_key}`)
     .then((res) => {
+      const { fields } = res.data.data;
       dispatch({
         type: GET_FIELDS,
-        payload: res.data.data,
+        payload: fields,
       });
       dispatch({
         type: INITIALIZED,

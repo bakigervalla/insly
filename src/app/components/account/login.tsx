@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Form, Input, Button, Checkbox } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
-import { toast } from "react-toastify";
 
-import { Navigate } from "react-router-dom";
-import { useAuth, login, setLogin } from "../../context/auth/AuthProvider";
+import { useAuth, login } from "../../context/auth/AuthProvider";
 import { useForm } from "../../hooks/useForm";
 import { useLocalStorage } from "@rehooks/local-storage";
 
@@ -74,7 +72,7 @@ const LogIn = () => {
 
   return (
     <>
-      <Form onSubmit={handleSubmit} labelWidth={150} className="login">
+      <Form onSubmit={handleSubmit} labelWidth={150} className="form">
         <h5>Login to Quote &amp; Bind</h5>
         <div>
           <Form.Item label="Instance URL" name="instance">

@@ -1,5 +1,6 @@
 import React, { useContext, useReducer } from "react";
 import { useLocalStorage, writeStorage, deleteFromStorage } from "@rehooks/local-storage";
+import { encode, decode } from "string-encode-decode";
 
 import AuthContext from "./AuthContext";
 import { AuthReducer } from "./AuthReducer";
@@ -32,8 +33,16 @@ export const login = (dispatch, formData: any, instances: any) => {
     })
     .then((res) => {
       // save login
-      let user = { instance: formData.instance, email: formData.email, token: res.data.access_token };
-      if (formData.rememberme) writeStorage("user", user);
+      let user = {
+        instance: formData.instance,
+        email: formData.email,
+        token: res.data.access_token,
+        password: encode(formData.password),
+      };
+      if (formData.rememberme) {
+        deleteFromStorage("user");
+        writeStorage("user", user);
+      }
 
       if (instances.indexOf(formData.instance) === -1) {
         instances.push(formData.instance);
@@ -64,7 +73,7 @@ export const logout = (dispatch) => {
 
 // Get Settings
 export const getSettings = (dispatch, user) => {
-  const settings = {
+  const config = {
     email: user.email,
     name: "baki gervalla",
     version: "1.2",
@@ -77,12 +86,12 @@ export const getSettings = (dispatch, user) => {
     },
   };
 
-  writeStorage("config", settings);
+  writeStorage("config", config);
 
   dispatch({
     type: GET_SETTINGS,
     //payload: res.data,
-    payload: settings,
+    payload: config,
   });
 
   return;
@@ -131,7 +140,6 @@ export const getSettings = (dispatch, user) => {
 export const saveSettings = (dispatch, settings) => {
   deleteFromStorage("config");
   writeStorage("config", settings);
-
   dispatch({
     type: GET_SETTINGS,
     //payload: res.data,
@@ -145,11 +153,20 @@ export const clearErrors = (dispatch) => dispatch({ type: CLEAR_ERRORS });
 export const AuthProvider = (props: any) => {
   let [user] = useLocalStorage<any>("user");
   let [settings] = useLocalStorage<any>("config");
+  let isAuthenticated = user != undefined;
+
+  if (isAuthenticated)
+    login(
+      props.dispatch,
+      { instance: user.instance, email: user.email, password: decode(user.password) },
+      user.instance
+    );
+
   const initialState = {
     initialized: false,
     loading: false,
     token: user?.token,
-    isAuthenticated: user?.token.length > 0,
+    isAuthenticated: isAuthenticated,
     user: user || {},
     config: settings || {
       fieldsDisplay: "1",

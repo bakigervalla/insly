@@ -34,6 +34,7 @@ const Index = () => {
     let arrSelected = selectedField["value"]?.split(",");
     getFields(inslyDispatch, arrSelected[0], arrSelected[1]);
   }, [selectedField]);
+
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
     // initialValues: { instance: "", email: "", password: "" },
@@ -76,7 +77,7 @@ const Index = () => {
 
   return (
     <>
-      <Form onSubmit={handleSubmit} labelWidth={150} className="login">
+      <Form onSubmit={handleSubmit} labelWidth={150} className="form integration">
         <div className="schema-title">
           <Form.Item label="Choose Schema &amp; Integration:" name="schema">
             <CreatableSelect
@@ -93,7 +94,7 @@ const Index = () => {
             ></CreatableSelect>
           </Form.Item>
         </div>
-        <FieldsList items={fields} />
+        <FieldsList fields={fields} />
       </Form>
     </>
   );

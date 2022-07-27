@@ -1,40 +1,92 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Checkbox } from "dashkit-ui";
-// import CreatableSelect from "react-select/creatable";
+import * as _ from "lodash";
+import { useAuth } from "../../context/auth/AuthProvider";
 
-// import { Navigate } from "react-router-dom";
-// import { useInsly, getSchemas } from "../../context/insly/InslyState";
+import { Form, Card, Input, Button, Checkbox } from "dashkit-ui";
+import { Plus } from "react-feather";
 
-// import { useForm } from "../../hooks/useForm";
+import ToggleItem from "./toggle-item";
 
-const FieldsList = ({ items }: any) => {
+const FieldsList = ({ fields }: any) => {
+  const [authState] = useAuth();
+  const { config } = authState;
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState([]);
+  const [orderType, setOrderType] = useState("asc");
   // const [inslyState, inslyDispatch] = useInsly();
   // const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
   // const { schemas } = inslyState;
 
-  console.log(items);
+  useEffect(() => {
+    setFilter(fields);
+  }, [fields]);
 
   const handleSearch = (e: any) => {
-    console.log(e);
+    setSearch(e);
+    if (!e) {
+      setFilter(fields);
+      return;
+    }
+    setFilter(
+      _.filter(fields, (item) => {
+        return config.settings.fieldsDisplay == "1"
+          ? item.name.toLowerCase().includes(e.toLowerCase())
+          : item.title.toLowerCase().includes(e.toLowerCase());
+      })
+    );
+  };
+
+  const insertFields = (field: any) => {
+    console.log(field);
+  };
+
+  const sortOrder = (type: string = "appearance") => {
+    if (!filter) return;
+
+    switch (type) {
+      case "appearance":
+        setFilter(_.orderBy(fields, "title", orderType === "asc" ? "desc" : "asc"));
+        break;
+      case "name":
+        setFilter(_.orderBy(fields, "name", orderType === "asc" ? "desc" : "asc"));
+        break;
+    }
+    setOrderType(orderType === "asc" ? "desc" : "asc");
   };
 
   return (
-    <div className="dk-form-item">
+    <div className="dk-form-item fields">
       <div className="ms-Grid-row">
-        <label className="ms-sm6 ms-md6 ms-lg6">Fields List</label>
-        <label className="ms-sm3 ms-md6 ms-lg6 right">Sort by Appearance</label>
-        <label className="ms-sm3 ms-md6 ms-lg6 right">Sort by Name</label>
+        <label className="ms-sm4 ms-md4 ms-lg4">
+          <strong>Fields List</strong>
+        </label>
+        <div className="ms-sm8 ms-md8 ms-lg8 text-right">
+          <label className="label-link" onClick={() => sortOrder("appearance")}>
+            Sort by Appearance
+          </label>
+          <label>&nbsp;|&nbsp;</label>
+          <label className="label-link" onClick={() => sortOrder("name")}>
+            Sort by Name
+          </label>
+        </div>
       </div>
       <div className="ms-Grid-row">
         <Input placeholder="Search" name="search" value={search} onChange={handleSearch} />
       </div>
-      <div className="ms-Grid-row">
-        {items &&
-          items.fields.map((item, key) => {
-            return <li key={key}>{item.name}</li>;
-          })}
-      </div>
+
+      <ul className="fields-list">
+        {filter
+          ? filter.map((field, key) => {
+              return (
+                <li key={key} title={field.title}>
+                  <Plus className="add-ico" onClick={() => insertFields(field)} />
+                  {config.settings.fieldsDisplay == "1" ? field.name : field.title}
+                  <ToggleItem field={field} />
+                </li>
+              );
+            })
+          : ""}
+      </ul>
     </div>
   );
 };

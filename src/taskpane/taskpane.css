@@ -83,55 +83,55 @@ div.link a.active {
 /*
 LOGIN
 */
-.login {
-    padding: 0rem 2rem;
+.form {
+    padding: 0rem 1rem;
 }
 
-.login h5 {
+.form h5 {
     margin: 0 0 2rem 0;
 }
 
-.login .dk-form-item {
+.form .dk-form-item {
     display: block;
 }
 
-.login .dk-form-item-label {
+.form .dk-form-item-label {
     width  : auto;
     height : auto;
     padding: 0;
 }
 
-.login .dk-form-item-label-right {
+.form .dk-form-item-label-right {
     justify-content: left;
     font-weight    : bold;
     font-size      : 0.8rem;
-    padding-bottom : 4px;
+    padding-bottom : 8px;
 }
 
-.login .dk-input,
-.login .dk-input-wrapper {
+.form .dk-input,
+.form .dk-input-wrapper {
     width: 100%;
 }
 
-.login .pass-label {
+.form .pass-label {
     margin-left: 8px;
     font-weight: bold;
 }
 
-.login .pass-remind {
+.form .pass-remind {
     margin-bottom: 6px;
     float        : right;
     text-align   : right;
     margin-right : 12px;
 }
 
-.login .checkbox {
+.form .checkbox {
     display   : flex;
     float     : right;
     margin-top: -20px;
 }
 
-.login .right .dk-form-item-control {
+.form .right .dk-form-item-control {
     float: right;
 }
 
@@ -164,7 +164,7 @@ LOGIN
     margin: 0
 }
 
-.login .dk-form-item {
+.form .dk-form-item {
     margin-bottom: 0 !important;
     margin-top   : 24px;
 }
@@ -213,4 +213,101 @@ LOGIN
 
 .schema-title .dk-form-item-label {
     white-space: nowrap;
+}
+
+.ms-Grid-row,
+.dk-layout-content {
+    margin: 0 !important
+}
+
+.fields {
+    border-top  : 1px solid #ccc;
+    margin-left : -32px;
+    padding     : 20px 32px;
+    margin-right: -32px;
+}
+
+.fields div:first-child {
+    display: flex;
+    padding: 0 8px 8px 0;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.integration .dk-form-item {
+    margin-bottom: 24px !important;
+    margin-top   : 0
+}
+
+.label-link {
+    color : #2C7BE5;
+    cursor: pointer;
+}
+
+.fields ul {
+    list-style: none;
+    margin    : 20px 6px;
+}
+
+.fields ul li {
+    border-bottom : 1px solid #ccc;
+    padding-bottom: 4px;
+}
+
+.add-ico,
+.show-alternatives {
+    width : 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.show-alternatives {
+    float: right;
+}
+
+.alternatives {
+    height    : 300px;
+    overflow-y: auto;
+}
+
+.fields-list {
+    height    : 600px;
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #666;
+    background-color  : #F5F5F5;
+}
+
+::-webkit-scrollbar {
+    width           : 6px;
+    height          : 5px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #666;
+}
+
+.alternatives .dk-card-header {
+    padding: 6px 4px 0 8px !important;
+}
+
+.dk-card.alternatives {
+    margin-left: 20px;
+}
+
+.alternatives .dk-card-body {
+    padding: 0 !important;
+}
+
+div.alternatives .dk-card-body ul {
+    margin: 4px !important;
 }
