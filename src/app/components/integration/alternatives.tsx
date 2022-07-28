@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { Card } from "dashkit-ui";
 import { Plus } from "react-feather";
 
-const Alternatives = ({ items }: any) => {
-  const insertFields = (field: any) => {
-    console.log(field);
-  };
+type Props = {
+  items: any;
+  onInsert: (field: any) => void;
+};
 
+const Alternatives: FunctionComponent<Props> = ({ items, onInsert }) => {
   return (
     <div className="alternatives">
       <Card className="alternatives">
@@ -19,7 +20,7 @@ const Alternatives = ({ items }: any) => {
               items.map((item, key) => (
                 <li key={key}>
                   <>
-                    <Plus className="add-ico" onClick={() => insertFields(item)} />
+                    <Plus className="add-ico" onClick={() => onInsert(item)} />
                     {item.placeholder}
                   </>
                 </li>

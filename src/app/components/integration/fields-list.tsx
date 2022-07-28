@@ -38,6 +38,16 @@ const FieldsList = ({ fields }: any) => {
 
   const insertFields = (field: any) => {
     console.log(field);
+    let insertWithTitle = config.settings.insertWithTitle;
+    Word.run(async (context) => {
+      const paragraph = context.document.body.insertParagraph(
+        insertWithTitle ? `${field.title}: ${field.placeholder}` : field.placeholder,
+        Word.InsertLocation.end
+      );
+      // paragraph.font.color = "blue";
+      // paragraph.font.bold = true;
+      await context.sync();
+    });
   };
 
   const sortOrder = (type: string = "appearance") => {
@@ -81,7 +91,7 @@ const FieldsList = ({ fields }: any) => {
                 <li key={key} title={field.title}>
                   <Plus className="add-ico" onClick={() => insertFields(field)} />
                   {config.settings.fieldsDisplay == "1" ? field.name : field.title}
-                  <ToggleItem field={field} />
+                  <ToggleItem field={field} onInsert={insertFields} />
                 </li>
               );
             })

@@ -5,9 +5,12 @@ import {
   GET_SETTINGS,
   GET_SCHEMAS,
   GET_FIELDS,
+  SET_SELECTED_SCHEMA,
   GET_TEMPLATES,
   SUBMIT_DOCUMENT,
   GET_DOCUMENT,
+  GET_PAYLOAD,
+  DOCUMENT_PREVIEW,
   ERROR,
   CLEAR_ERRORS,
 } from "../types";
@@ -51,6 +54,12 @@ export const InslyReducer = (state: any, action: any) => {
         fields: action.payload,
         loading: false,
       };
+    case SET_SELECTED_SCHEMA:
+      return {
+        ...state,
+        schema: action.payload,
+        loading: false,
+      };
     case GET_TEMPLATES:
       return {
         ...state,
@@ -67,6 +76,18 @@ export const InslyReducer = (state: any, action: any) => {
       return {
         ...state,
         documents: action.payload,
+        loading: false,
+      };
+    case GET_PAYLOAD:
+      return {
+        ...state,
+        payloadJson: action.payload,
+        loading: false,
+      };
+    case DOCUMENT_PREVIEW:
+      return {
+        ...state,
+        documentPreview: action.payload,
         loading: false,
       };
     case ERROR:

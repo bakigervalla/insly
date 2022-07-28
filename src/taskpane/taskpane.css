@@ -220,14 +220,18 @@ LOGIN
     margin: 0 !important
 }
 
-.fields {
+.fields,
+.payload,
+.document {
     border-top  : 1px solid #ccc;
     margin-left : -32px;
     padding     : 20px 32px;
     margin-right: -32px;
 }
 
-.fields div:first-child {
+
+.fields div:first-child,
+.payload div:first-child {
     display: flex;
     padding: 0 8px 8px 0;
 }
@@ -310,4 +314,47 @@ LOGIN
 
 div.alternatives .dk-card-body ul {
     margin: 4px !important;
+}
+
+.template-actions-buttons {
+    display    : flex;
+    float      : right;
+    padding-top: 8px;
+}
+
+.template .dk-form-item {
+    margin-bottom: 14px !important;
+    margin-top   : 0
+}
+
+.template-actions-buttons button:last-child {
+    background-color: #FFF;
+    margin-left     : 15px;
+    color           : #2C7BE5;
+}
+
+.template .template-schema {
+    clear     : both;
+    margin-top: 68px;
+}
+
+.document div:first-child {
+    text-align : right;
+    padding-top: 6px;
+    width      : 100%;
+}
+
+.template-actions-buttons.document {
+    float: none !important;
+}
+
+.payload button {
+    background-color: #FFF;
+    float           : right;
+    color           : #2C7BE5;
+}
+
+.payload-json {
+    height    : 400px;
+    overflow-y: auto;
 }

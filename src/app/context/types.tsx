@@ -4,9 +4,12 @@ export const GET_INSTANCES = "GET_INSTANCES";
 export const GET_SETTINGS = "GET_SETTINGS";
 export const GET_SCHEMAS = "GET_SCHEMAS";
 export const GET_FIELDS = "GET_FIELDS";
+export const SET_SELECTED_SCHEMA = "SET_SELECTED_SCHEMA";
 export const GET_TEMPLATES = "GET_TEMPLATES";
 export const SUBMIT_DOCUMENT = "SUBMIT_DOCUMENT";
 export const GET_DOCUMENT = "GET_DOCUMENT";
+export const GET_PAYLOAD = "GET_PAYLOAD";
+export const DOCUMENT_PREVIEW = "DOCUMENT_PREVIEW";
 
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
