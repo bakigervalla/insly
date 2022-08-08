@@ -15,6 +15,8 @@ import {
   CLEAR_ERRORS,
 } from "../types";
 
+import { toast } from "react-toastify";
+
 export const InslyReducer = (state: any, action: any) => {
   switch (action.type) {
     case INITIALIZED:
@@ -67,15 +69,24 @@ export const InslyReducer = (state: any, action: any) => {
         loading: false,
       };
     case SUBMIT_DOCUMENT:
+      toast.success("Document uploaded successfully.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return {
         ...state,
-        documents: action.payload,
+        document: action.payload,
         loading: false,
       };
     case GET_DOCUMENT:
       return {
         ...state,
-        documents: action.payload,
+        document: action.payload,
         loading: false,
       };
     case GET_PAYLOAD:
@@ -91,6 +102,15 @@ export const InslyReducer = (state: any, action: any) => {
         loading: false,
       };
     case ERROR:
+      toast.error(action.payload, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return {
         ...state,
         error: JSON.stringify(action.payload.message), //action.payload,

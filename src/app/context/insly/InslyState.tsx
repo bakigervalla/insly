@@ -22,7 +22,7 @@ import {
   ERROR,
   CLEAR_ERRORS,
 } from "../types";
-import { loadTheme } from "@fluentui/react";
+import { reject } from "lodash";
 
 // Create a custom hook to use the Vehicle context
 
@@ -161,38 +161,80 @@ export const getSettings = (dispatch) => {
 };
 
 // Submit Document
-export const submitDocument = async (dispatch, template_tag, locale, formData) => {
-  // let formData = new FormData();
-  // formData.append("file", file);
-  axios({
-    method: "put",
-    url: `/api/add-ins/word/template/${template_tag}/${locale}`,
-    data: formData,
-    headers: { "Content-Type": "multipart/form-data" },
-  })
-    .then((res) => {
-      dispatch({
-        type: SUBMIT_DOCUMENT,
-        payload: res.data.data,
-      });
-      dispatch({
-        type: INITIALIZED,
-        payload: true,
-      });
-    })
-    .catch((err) =>
-      dispatch({
-        type: ERROR,
-        payload: err,
+export const submitDocument = async (dispatch, template_tag, template_locale, filePath) => {
+  var ext = filePath.split(".").pop();
+  var leafname = filePath.split("\\").pop().split("/").pop();
+  getFileBytes(ext).then((result) => {
+    let formData = new FormData();
+    formData.append("file", result, leafname);
+    formData.append("_method", "put");
+
+    axios
+      .post(`/api/add-ins/word/templates/${template_tag}/${template_locale}`, formData, {
+        headers: { "content-type": "multipart/form-data" },
       })
-    );
+      .then((res) => {
+        dispatch({
+          type: SUBMIT_DOCUMENT,
+          payload: res.data.data,
+        });
+      })
+      .catch((err) =>
+        dispatch({
+          type: ERROR,
+          payload: err,
+        })
+      );
+  });
+};
+
+const getFileBytes = (ext: string): any => {
+  return new Promise((resolve) => {
+    Office.context.document.getFileAsync(Office.FileType.Compressed, { sliceSize: 1000000 }, function (result) {
+      if (result.status == Office.AsyncResultStatus.Succeeded) {
+        var file = result.value;
+        file.getSliceAsync(0, function (result) {
+          if (result.status == Office.AsyncResultStatus.Succeeded) {
+            var blob = new Blob(result.value.data);
+            var reader = new FileReader();
+            reader.onload = function (event) {
+              var base64 = event.target.result;
+              resolve(base64);
+            };
+            reader.readAsDataURL(blob);
+            // resolve(result.value.data);
+            resolve(
+              new Blob([new Uint8Array(result.value.data)], {
+                type:
+                  ext === "docx"
+                    ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    : "application/msword",
+              })
+            );
+          } else if (result.status == Office.AsyncResultStatus.Failed) {
+            reject(null);
+          } else {
+            reject(null);
+          }
+        });
+      } else {
+        reject(null);
+      }
+    });
+  });
 };
 
 // Get Document
 export const getDocument = async (dispatch, template_id) => {
-  axios(`/api/add-ins/word/template/${template_id}`)
+  axios(`/api/add-ins/word/templates/${template_id}/download`)
     .then((res) => {
-      console.log(res.data);
+      console.log("res.data");
+      console.log(res);
+
+      Word.run(async (context) => {
+        context.document.body.insertFileFromBase64(res.data, Word.InsertLocation.replace);
+        await context.sync();
+      });
 
       dispatch({
         type: GET_DOCUMENT,
@@ -213,10 +255,9 @@ export const getDocument = async (dispatch, template_id) => {
 
 // Payload JSON
 export const getPayloadJSON = async (dispatch, schema_id, integration_key) => {
-  axios(`/api/add-ins/word/schemas/${schema_id}/integrations/${integration_key}/payload`)
+  axios
+    .post(`/api/add-ins/word/schemas/integrations/${integration_key}/payload`, { schema_id: schema_id })
     .then((res) => {
-      console.log(res);
-
       dispatch({
         type: GET_PAYLOAD,
         payload: res.data.data,
@@ -235,24 +276,41 @@ export const getPayloadJSON = async (dispatch, schema_id, integration_key) => {
 };
 
 // Get Document
-export const getDocumentPreview = async (dispatch) => {
-  axios(`/api/add-ins/word/preview`)
-    .then((res) => {
-      dispatch({
-        type: DOCUMENT_PREVIEW,
-        payload: res.data.data,
-      });
-      dispatch({
-        type: INITIALIZED,
-        payload: true,
-      });
-    })
-    .catch((err) =>
-      dispatch({
-        type: ERROR,
-        payload: err,
+export const getDocumentPreview = async (dispatch, filePath) => {
+  var ext = filePath.split(".").pop();
+  var leafname = filePath.split("\\").pop().split("/").pop();
+  getFileBytes(ext).then((result) => {
+    let formData = new FormData();
+    formData.append("file", result, leafname);
+    formData.append("data[insured]", "Vardenis Pavardenis");
+    formData.append("data[occupation]", "Occupation123");
+    formData.append("data[policy][number]", "Policy number 123456");
+    formData.append("data[inceptionDate]", new Date().toLocaleDateString());
+
+    axios
+      .post(`/api/add-ins/word/preview`, formData)
+      .then((res) => {
+        var blob = new Blob([res.data], { type: "application/pdf" });
+        var win = window.open("", "_blank");
+        var URL = window.URL || window.webkitURL;
+        var dataUrl = URL.createObjectURL(blob);
+
+        dispatch({
+          type: DOCUMENT_PREVIEW,
+          payload: dataUrl,
+        });
+        dispatch({
+          type: INITIALIZED,
+          payload: true,
+        });
       })
-    );
+      .catch((err) =>
+        dispatch({
+          type: ERROR,
+          payload: err,
+        })
+      );
+  });
 };
 
 export const clearError = async (dispatch) => {

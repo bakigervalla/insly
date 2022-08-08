@@ -37,15 +37,11 @@ const FieldsList = ({ fields }: any) => {
   };
 
   const insertFields = (field: any) => {
-    console.log(field);
     let insertWithTitle = config.settings.insertWithTitle;
+    let text = insertWithTitle ? `${field.title}: ${field.placeholder}` : field.placeholder;
+
     Word.run(async (context) => {
-      const paragraph = context.document.body.insertParagraph(
-        insertWithTitle ? `${field.title}: ${field.placeholder}` : field.placeholder,
-        Word.InsertLocation.end
-      );
-      // paragraph.font.color = "blue";
-      // paragraph.font.bold = true;
+      context.document.body.insertText(text, Word.InsertLocation.end);
       await context.sync();
     });
   };
@@ -85,7 +81,7 @@ const FieldsList = ({ fields }: any) => {
       </div>
 
       <ul className="fields-list">
-        {filter
+        {filter?.length > 0
           ? filter.map((field, key) => {
               return (
                 <li key={key} title={field.title}>

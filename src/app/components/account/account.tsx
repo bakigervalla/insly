@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLocalStorage } from "@rehooks/local-storage";
 import { Card, Form, Switch, Radio, Button } from "dashkit-ui";
 const RadioGroup = Radio.Group;
 
@@ -8,6 +9,7 @@ import { useForm } from "../../hooks/useForm";
 const Account = () => {
   const [authState, authDispatch] = useAuth();
   const { config, user } = authState;
+  let [userStorage] = useLocalStorage<any>("user");
 
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
@@ -45,7 +47,7 @@ const Account = () => {
       },
     },
     onChange: () => {
-      saveSettings(authDispatch, config);
+      saveSettings(authDispatch, config, userStorage == null ? user : null);
     },
   });
 

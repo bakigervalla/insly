@@ -15,7 +15,7 @@ import {
 
 const Index = () => {
   const [inslyState, inslyDispatch] = useInsly();
-  const { templates, schemas, schema, payloadJson } = inslyState;
+  const { templates, schemas, schema, document, payloadJson } = inslyState;
   const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedField, setSelectedField] = useState({ label: "", value: "" });
 
@@ -31,6 +31,8 @@ const Index = () => {
 
   useEffect(() => {
     let templateOptions = [];
+    console.log("templates");
+    console.log(templates);
     templates.map((template) => {
       templateOptions.push({
         label: `${template.title} (${template.tag})`,
@@ -42,6 +44,8 @@ const Index = () => {
 
   useEffect(() => {
     let schemaOptions = [];
+    console.log("schemaOptions");
+    console.log(schemas);
     schemas.map((schema) => {
       schema.integrations.map((integration) => {
         schemaOptions.push({ label: `${schema.name} - ${integration.key}`, value: `${schema.id},${integration.key}` });
@@ -56,16 +60,20 @@ const Index = () => {
 
   useEffect(() => {
     let _selectedSchema = selectedSchema["value"]?.split(",");
+    if (_selectedSchema[0] === "") return;
     getPayloadJSON(inslyDispatch, _selectedSchema[0], _selectedSchema[1]);
   }, [selectedSchema]);
 
   const uploadDocument = () => {
     let _selectedTemplate = selectedField["value"]?.split(",");
-    submitDocument(inslyDispatch, _selectedTemplate[0], _selectedTemplate[1], null);
+    let filePath = Office.context.document.url;
+    submitDocument(inslyDispatch, _selectedTemplate[0], _selectedTemplate[1], filePath);
   };
   const downloadDocument = () => {
-    let _selectedTemplate = selectedField["value"]?.split(",");
-    getDocument(inslyDispatch, _selectedTemplate[2]);
+    let _selectedTemplate = selectedSchema["value"]?.split(",");
+    console.log(_selectedTemplate);
+
+    getDocument(inslyDispatch, _selectedTemplate[0]);
   };
 
   return (
@@ -108,7 +116,7 @@ const Index = () => {
               options={schemaOptions}
             ></CreatableSelect>
           </Form.Item>
-          <TemplatePayload payload={payloadJson} />
+          <TemplatePayload Json={payloadJson} />
         </div>
       </Form>
     </>

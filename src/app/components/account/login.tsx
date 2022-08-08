@@ -1,10 +1,11 @@
 import React from "react";
-import { Form, Input, Button, Checkbox } from "dashkit-ui";
+import { Form, Input, Button } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
 
 import { useAuth, login } from "../../context/auth/AuthProvider";
 import { useForm } from "../../hooks/useForm";
 import { useLocalStorage } from "@rehooks/local-storage";
+import { Link } from "react-router-dom";
 
 const LogIn = () => {
   const [, authDispatch] = useAuth();
@@ -104,13 +105,13 @@ const LogIn = () => {
         <div className="dk-form-item">
           <div className="ms-Grid-row">
             <label className="ms-sm6 ms-md6 ms-lg6 pass-label">Password</label>
-            <Checkbox
+            <Link
               className="ms-sm6 ms-md6 ms-lg6 pass-remind"
-              checked={data.rememberme || false}
-              onChange={(e: any) => handleChange("rememberme", e.target.checked)}
+              to={{ pathname: "https://uniqa.insly.site/password-recovery" }}
+              target="_blank"
             >
-              Remind Password
-            </Checkbox>
+              Forgot Password
+            </Link>
           </div>
           <div className="ms-Grid-row ms-Grid-col ms-md12">
             <Input

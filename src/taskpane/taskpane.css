@@ -355,6 +355,9 @@ div.alternatives .dk-card-body ul {
 }
 
 .payload-json {
-    height    : 400px;
-    overflow-y: auto;
+    height          : 300px;
+    overflow-y      : auto;
+    margin-bottom   : 20px;
+    background-color: #fff;
+    padding         : 8px !important;
 }

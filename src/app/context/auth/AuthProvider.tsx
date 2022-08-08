@@ -39,10 +39,6 @@ export const login = (dispatch, formData: any, instances: any) => {
         token: res.data.access_token,
         password: encode(formData.password),
       };
-      if (formData.rememberme) {
-        deleteFromStorage("user");
-        writeStorage("user", user);
-      }
 
       if (instances.indexOf(formData.instance) === -1) {
         instances.push(formData.instance);
@@ -137,9 +133,15 @@ export const getSettings = (dispatch, user) => {
     );
 };
 
-export const saveSettings = (dispatch, settings) => {
+export const saveSettings = (dispatch, settings, user) => {
   deleteFromStorage("config");
+  deleteFromStorage("user");
   writeStorage("config", settings);
+
+  if (user && settings.settings.keepMeLogged) {
+    writeStorage("user", user);
+  }
+
   dispatch({
     type: GET_SETTINGS,
     //payload: res.data,
