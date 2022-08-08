@@ -112,7 +112,8 @@ export default class App extends React.Component<AppProps> {
                     <PrivateRoute path="/integration" component={Integration} exact />
                     <PrivateRoute path="/template" component={Template} exact />
                     <Route path="/home" component={Home} exact />
-                    <Redirect to="/home" />
+                    <Route path="/" component={Home} />
+                    {/* <Redirect to="/home" /> */}
                   </Switch>
                 </Content>
               </Layout>

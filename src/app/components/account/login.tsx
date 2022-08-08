@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button } from "dashkit-ui";
 import CreatableSelect from "react-select/creatable";
 
@@ -9,12 +9,18 @@ import { Link } from "react-router-dom";
 
 const LogIn = () => {
   const [, authDispatch] = useAuth();
+  const [instances, setInstances] = useState([]);
   let arr = useLocalStorage<any>("instances");
 
   // useLocalStorage returns empty values
-  let instances = arr.filter(function (el) {
-    return el != null && (typeof el === "string" || el instanceof String);
-  });
+  useEffect(() => {
+    let _instances = [];
+    arr.filter(function (el) {
+      if (el != null && (typeof el[0] === "string" || el[0] instanceof String))
+        _instances.push({ label: el[0], value: el[0] });
+    });
+    setInstances(_instances);
+  }, []);
 
   // form handlers
   const { handleSubmit, handleChange, data, errors, fillData } = useForm({
@@ -86,9 +92,7 @@ const LogIn = () => {
               //   inputValue={data.instance || ""}
               //   onInputChange={(e: any) => handleChange("instance", e)}
               onChange={(e: any) => handleChange("instance", e)}
-              options={instances.map((val) => {
-                return { value: val, label: val };
-              })}
+              options={instances}
             ></CreatableSelect>
           </Form.Item>
           {errors.instance && <p className="error">{errors.instance}</p>}
