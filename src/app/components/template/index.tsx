@@ -4,23 +4,13 @@ import CreatableSelect from "react-select/creatable";
 import { useForm } from "../../hooks/useForm";
 import TemplatePayload from "./payload";
 
-import {
-  useInsly,
-  getTemplates,
-  getSchemas,
-  submitDocument,
-  getDocument,
-  getPayloadJSON,
-} from "../../context/insly/InslyState";
+import { useInsly, getTemplates, getSchemas, submitDocument, getDocument } from "../../context/insly/InslyState";
 
 const Index = () => {
   const [inslyState, inslyDispatch] = useInsly();
-  const { templates, schemas, schema, document, payloadJson } = inslyState;
+  const { templates, schemas, payloadJson } = inslyState;
   const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedField, setSelectedField] = useState({ label: "", value: "" });
-
-  const [schemaOptions, setSchemaOptions] = useState<{ label: string; value: string }[]>([]);
-  const [selectedSchema, setSelectedSchemaField] = useState(schema);
 
   const { handleSubmit, handleChange } = useForm({});
 
@@ -43,43 +33,26 @@ const Index = () => {
   }, [templates]);
 
   useEffect(() => {
-    let schemaOptions = [];
-    console.log("schemaOptions");
-    console.log(schemas);
-    schemas.map((schema) => {
-      schema.integrations.map((integration) => {
-        schemaOptions.push({ label: `${schema.name} - ${integration.key}`, value: `${schema.id},${integration.key}` });
-      });
-    });
-    setSchemaOptions(schemaOptions);
-  }, [schemas]);
-
-  useEffect(() => {
     // getFields(inslyDispatch, arrSelected[0], arrSelected[1]);
   }, [selectedField]);
-
-  useEffect(() => {
-    let _selectedSchema = selectedSchema["value"]?.split(",");
-    if (_selectedSchema[0] === "") return;
-    getPayloadJSON(inslyDispatch, _selectedSchema[0], _selectedSchema[1]);
-  }, [selectedSchema]);
 
   const uploadDocument = () => {
     let _selectedTemplate = selectedField["value"]?.split(",");
     let filePath = Office.context.document.url;
     submitDocument(inslyDispatch, _selectedTemplate[0], _selectedTemplate[1], filePath);
   };
-  const downloadDocument = () => {
-    let _selectedTemplate = selectedSchema["value"]?.split(",");
-    console.log(_selectedTemplate);
+  //   const downloadDocument = () => {
+  //     let _selectedTemplate = selectedSchema["value"]?.split(",");
+  //     console.log(_selectedTemplate);
 
-    getDocument(inslyDispatch, _selectedTemplate[0]);
-  };
+  //     getDocument(inslyDispatch, _selectedTemplate[0]);
+  //   };
 
   return (
     <>
       <Form onSubmit={handleSubmit} labelWidth={150} className="form template">
         <div className="schema-title">
+          <Button icon="refresh-cw" className="refresh-template-btn" onClick={() => getTemplates(inslyDispatch)} />
           <Form.Item label="Select Document Template:" name="template">
             <CreatableSelect
               className="instanceURL"
@@ -98,24 +71,12 @@ const Index = () => {
             <Button type="primary" icon="upload-cloud" onClick={uploadDocument}>
               Upload
             </Button>
-            <Button type="primary" icon="download-cloud" onClick={downloadDocument}>
+            <Button type="primary" icon="download-cloud">
               Download
             </Button>
           </div>
         </div>
         <div className="schema-title">
-          <Form.Item label="Choose Schema &amp; Integration:" name="schema">
-            <CreatableSelect
-              className="instanceURL"
-              name="schema"
-              value={selectedSchema}
-              onChange={(e: any) => {
-                setSelectedSchemaField(e);
-                handleChange("schema", e);
-              }}
-              options={schemaOptions}
-            ></CreatableSelect>
-          </Form.Item>
           <TemplatePayload Json={payloadJson} />
         </div>
       </Form>

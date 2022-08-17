@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            /* Safari */
+            animation: spin 2s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+
+        const getBlobFromUrl = () => {
+            return new Promise((resolve, reject) => {
+                let request = new XMLHttpRequest();
+                request.open('GET', `file:///${url}`, true);
+                request.responseType = 'blob';
+                request.onload = () => {
+                    resolve(request.response);
+                };
+                request.onerror = reject;
+                request.send();
+            })
+        }
+
+        const getDataFromBlob = (myBlob) => {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(myBlob);
+            })
+        }
+
+        const convertUrlToImageData = async (myImageUrl) => {
+            try {
+                let myBlob = await getBlobFromUrl(myImageUrl);
+                console.log(myBlob)
+                let myImageData = await getDataFromBlob(myBlob);
+                console.log(myImageData)
+                return myImageData;
+            } catch (err) {
+                console.log(err);
+                return null;
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        let url = params.get("prevdoc");
+
+        // getBlobFromUrl();
+
+        const setIframeSource = () => {
+            console.log('era');
+            console.log(url);
+            document.getElementById('docPreviewIFrame').src = url;
+        }
+
+        // blob:https://localhost:3000/e40cb2d9-a0aa-488e-bafb-95bfb46457eb
+
+
+    </script>
+
+</head>
+
+<body>
+
+    <div class="loader"></div>
+    <iframe id="docPreviewIFrame" onload="setIframeSource"></iframe>
+</body>
+
+</html>

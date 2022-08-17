@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, Slide } from "react-toastify";
 
@@ -35,6 +35,9 @@ export default class App extends React.Component<AppProps> {
     super(props, context);
     this.state = {
       listItems: [],
+    };
+    window.process = {
+      ...window.process,
     };
   }
 

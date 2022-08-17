@@ -23,6 +23,7 @@ import {
   CLEAR_ERRORS,
 } from "../types";
 import { reject } from "lodash";
+import { setNestedObjectValues } from "formik";
 
 // Create a custom hook to use the Vehicle context
 
@@ -188,42 +189,6 @@ export const submitDocument = async (dispatch, template_tag, template_locale, fi
   });
 };
 
-const getFileBytes = (ext: string): any => {
-  return new Promise((resolve) => {
-    Office.context.document.getFileAsync(Office.FileType.Compressed, { sliceSize: 1000000 }, function (result) {
-      if (result.status == Office.AsyncResultStatus.Succeeded) {
-        var file = result.value;
-        file.getSliceAsync(0, function (result) {
-          if (result.status == Office.AsyncResultStatus.Succeeded) {
-            var blob = new Blob(result.value.data);
-            var reader = new FileReader();
-            reader.onload = function (event) {
-              var base64 = event.target.result;
-              resolve(base64);
-            };
-            reader.readAsDataURL(blob);
-            // resolve(result.value.data);
-            resolve(
-              new Blob([new Uint8Array(result.value.data)], {
-                type:
-                  ext === "docx"
-                    ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    : "application/msword",
-              })
-            );
-          } else if (result.status == Office.AsyncResultStatus.Failed) {
-            reject(null);
-          } else {
-            reject(null);
-          }
-        });
-      } else {
-        reject(null);
-      }
-    });
-  });
-};
-
 // Get Document
 export const getDocument = async (dispatch, template_id) => {
   axios(`/api/add-ins/word/templates/${template_id}/download`)
@@ -254,7 +219,9 @@ export const getDocument = async (dispatch, template_id) => {
 };
 
 // Payload JSON
-export const getPayloadJSON = async (dispatch, schema_id, integration_key) => {
+export const getPayloadJSON = async (dispatch, schema_id, integration_key, quote) => {
+  console.log(quote);
+
   axios
     .post(`/api/add-ins/word/schemas/integrations/${integration_key}/payload`, { schema_id: schema_id })
     .then((res) => {
@@ -287,31 +254,80 @@ export const getDocumentPreview = async (dispatch, filePath) => {
     formData.append("data[policy][number]", "Policy number 123456");
     formData.append("data[inceptionDate]", new Date().toLocaleDateString());
 
-    axios
-      .post(`/api/add-ins/word/preview`, formData)
-      .then((res) => {
-        var blob = new Blob([res.data], { type: "application/pdf" });
-        var win = window.open("", "_blank");
-        var URL = window.URL || window.webkitURL;
-        var dataUrl = URL.createObjectURL(blob);
-
-        dispatch({
-          type: DOCUMENT_PREVIEW,
-          payload: dataUrl,
-        });
-        dispatch({
-          type: INITIALIZED,
-          payload: true,
-        });
-      })
-      .catch((err) =>
-        dispatch({
-          type: ERROR,
-          payload: err,
+    axios.post(`/api/add-ins/word/preview`, formData).then((res) => {
+      var blob = new Blob([res.data], { type: "application/pdf" });
+      toBase64(blob)
+        .then((base64) => {
+          dispatch({
+            type: DOCUMENT_PREVIEW,
+            payload: base64,
+          });
+          dispatch({
+            type: INITIALIZED,
+            payload: true,
+          });
         })
-      );
+        .catch((err) => {
+          console.log(err);
+          dispatch({
+            type: ERROR,
+            payload: err,
+          });
+        });
+    });
   });
 };
+
+const getFileBytes = (ext: string): any => {
+  return new Promise((resolve) => {
+    Office.context.document.getFileAsync(Office.FileType.Compressed, { sliceSize: 1000000 }, function (result) {
+      console.log(result);
+      if (result.status == Office.AsyncResultStatus.Succeeded) {
+        var file = result.value;
+        file.getSliceAsync(0, function (result) {
+          if (result.status == Office.AsyncResultStatus.Succeeded) {
+            var blob = new Blob([new Uint8Array(result.value.data)]);
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+              var base64 = event.target.result;
+              resolve(base64);
+            };
+            reader.readAsDataURL(blob);
+            // resolve(result.value.data);
+            resolve(
+              new Blob([new Uint8Array(result.value.data)], {
+                type:
+                  ext === "docx"
+                    ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    : "application/msword",
+              })
+            );
+          } else if (result.status == Office.AsyncResultStatus.Failed) {
+            reject(null);
+          } else {
+            reject(null);
+          }
+        });
+      } else {
+        reject(null);
+      }
+    });
+  });
+};
+
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log(error);
+      reject(error);
+    };
+  });
 
 export const clearError = async (dispatch) => {
   dispatch({ type: CLEAR_ERRORS });
