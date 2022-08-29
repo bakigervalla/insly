@@ -263,8 +263,7 @@ LOGIN
 }
 
 .grid-payload button {
-    height        : 26px;
-    padding-bottom: 2px;
+    height: 26px;
 }
 
 .fields div:first-child,
@@ -392,6 +391,12 @@ div.alternatives .dk-card-body ul {
     margin-bottom   : 20px;
     background-color: #fff;
     padding         : 8px !important;
+}
+
+.payload-json textarea {
+    height: 98%;
+    width : 100%;
+    border: none;
 }
 
 .previewDocButton {

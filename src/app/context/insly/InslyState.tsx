@@ -189,21 +189,53 @@ export const submitDocument = async (dispatch, template_tag, template_locale, fi
   });
 };
 
+function binaryToWords(str) {
+  if (str.match(/[10]{8}/g)) {
+    var wordFromBinary = str
+      .match(/([10]{8}|\s+)/g)
+      .map(function (fromBinary) {
+        return String.fromCharCode(parseInt(fromBinary, 2));
+      })
+      .join("");
+    return wordFromBinary;
+  }
+}
+
 // Get Document
 export const getDocument = async (dispatch, template_id) => {
   axios(`/api/add-ins/word/templates/${template_id}/download`)
     .then((res) => {
-      console.log("res.data");
-      console.log(res);
-
       Word.run(async (context) => {
-        context.document.body.insertFileFromBase64(res.data, Word.InsertLocation.replace);
+        var blob = new Blob([res.data]); // , { type: "application/pdf" }
+        const blobText = await new Response(blob).text();
+
+        var text = binaryToWords(blobText);
+
+        console.log(text);
+        context.document.body.insertText(text, Word.InsertLocation.replace);
         await context.sync();
+
+        // blob.text().then(async (text) => {
+        //   let blobText = text;
+        //   console.log(blobText);
+        //   context.document.body.insertText(blobText, Word.InsertLocation.replace);
+        //   await context.sync();
+        // });
+
+        // toBase64Text(blob)
+        //   .then(async (text: string) => {
+        //     console.log(text);
+        //     context.document.body.insertFileFromBase64(text, Word.InsertLocation.replace);
+        //     await context.sync();
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
       });
 
       dispatch({
         type: GET_DOCUMENT,
-        payload: res.data.data,
+        payload: res.data,
       });
       dispatch({
         type: INITIALIZED,
@@ -320,6 +352,19 @@ const toBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log(error);
+      reject(error);
+    };
+  });
+
+const toBase64Text = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
     reader.onload = () => {
       resolve(reader.result);
     };

@@ -47,6 +47,7 @@ const TemplatePayload = ({ Json }: any) => {
 
   const [schemaOptions, setSchemaOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedSchema, setSelectedSchemaField] = useState(schema);
+  const [pretty, setJson] = useState(Json);
   const { data, handleChange } = useForm({});
 
   let filePath = Office.context.document.url;
@@ -78,6 +79,14 @@ const TemplatePayload = ({ Json }: any) => {
     if (documentPreview) setIsOpen(true);
   }, [documentPreview]);
 
+  useEffect(() => {
+    setJson(JSON.stringify(Json, undefined, 4));
+  }, [Json]);
+
+  const setJsonField = (e) => {
+    setJson(e.target.value);
+  };
+
   return (
     <>
       <div className="dk-form-item payload">
@@ -92,7 +101,8 @@ const TemplatePayload = ({ Json }: any) => {
 
         <div className="ms-Grid-row">
           <div className="payload-json">
-            <input type="textarea" value={JSON.stringify(Json, null, 2)}></input>
+            {/* <input type="textarea" value={JSON.stringify(Json, null, 2)}></input> */}
+            <textarea onChange={setJsonField} value={pretty} />
           </div>
           <Button type="primary" icon="database" onClick={() => setmModalPayload(true)}>
             Generate Payload

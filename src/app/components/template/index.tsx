@@ -9,8 +9,8 @@ import { useInsly, getTemplates, getSchemas, submitDocument, getDocument } from 
 const Index = () => {
   const [inslyState, inslyDispatch] = useInsly();
   const { templates, schemas, payloadJson } = inslyState;
-  const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
-  const [selectedField, setSelectedField] = useState({ label: "", value: "" });
+  const [templateOptions, setOptions] = useState<{ label: string; value: string }[]>([]);
+  const [selectedTempalte, setSelectedTemplate] = useState({ label: "", value: "" });
 
   const { handleSubmit, handleChange } = useForm({});
 
@@ -19,14 +19,13 @@ const Index = () => {
     getSchemas(inslyDispatch);
   }, []);
 
+  // get templates
   useEffect(() => {
     let templateOptions = [];
-    console.log("templates");
-    console.log(templates);
     templates.map((template) => {
       templateOptions.push({
         label: `${template.title} (${template.tag})`,
-        value: `${template.tag},${template.locale},${template.id}`,
+        value: `${template.id},${template.tag},${template.locale}`,
       });
     });
     setOptions(templateOptions);
@@ -34,19 +33,18 @@ const Index = () => {
 
   useEffect(() => {
     // getFields(inslyDispatch, arrSelected[0], arrSelected[1]);
-  }, [selectedField]);
+  }, [selectedTempalte]);
 
   const uploadDocument = () => {
-    let _selectedTemplate = selectedField["value"]?.split(",");
+    let _selectedTemplate = selectedTempalte["value"]?.split(",");
     let filePath = Office.context.document.url;
     submitDocument(inslyDispatch, _selectedTemplate[0], _selectedTemplate[1], filePath);
   };
-  //   const downloadDocument = () => {
-  //     let _selectedTemplate = selectedSchema["value"]?.split(",");
-  //     console.log(_selectedTemplate);
 
-  //     getDocument(inslyDispatch, _selectedTemplate[0]);
-  //   };
+  const downloadDocument = () => {
+    let _selectedTemplate = selectedTempalte["value"]?.split(",");
+    getDocument(inslyDispatch, _selectedTemplate[0]);
+  };
 
   return (
     <>
@@ -57,12 +55,12 @@ const Index = () => {
             <CreatableSelect
               className="instanceURL"
               name="template"
-              value={selectedField}
+              value={selectedTempalte}
               onChange={(e: any) => {
-                setSelectedField(e);
+                setSelectedTemplate(e);
                 handleChange("template", e);
               }}
-              options={options}
+              options={templateOptions}
             ></CreatableSelect>
           </Form.Item>
         </div>
@@ -71,7 +69,7 @@ const Index = () => {
             <Button type="primary" icon="upload-cloud" onClick={uploadDocument}>
               Upload
             </Button>
-            <Button type="primary" icon="download-cloud">
+            <Button type="primary" icon="download-cloud" onClick={downloadDocument}>
               Download
             </Button>
           </div>
